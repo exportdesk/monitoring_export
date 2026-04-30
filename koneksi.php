@@ -1,9 +1,13 @@
 <?php
-$conn = mysqli_connect(
-    $_ENV['MYSQLHOST'],
-    $_ENV['MYSQLUSER'],
-    $_ENV['MYSQLPASSWORD'],
-    $_ENV['MYSQLDATABASE'],
-    $_ENV['MYSQLPORT']
-);
+try {
+    $conn = new PDO(
+        "mysql:host=".$_ENV['MYSQLHOST'].";dbname=".$_ENV['MYSQLDATABASE'].";port=".$_ENV['MYSQLPORT'],
+        $_ENV['MYSQLUSER'],
+        $_ENV['MYSQLPASSWORD']
+    );
+    
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Koneksi gagal: " . $e->getMessage());
+}
 ?>
