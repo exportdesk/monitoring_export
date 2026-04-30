@@ -7,13 +7,13 @@ ini_set('display_errors', 1);
 <?php include 'session.php'; ?>
 
 <?php
-$total = mysqli_num_rows(mysqli_query($conn,"SELECT * FROM hambatan"));
-$proses = mysqli_num_rows(mysqli_query($conn,"SELECT * FROM hambatan WHERE status='Diproses'"));
-$selesai = mysqli_num_rows(mysqli_query($conn,"SELECT * FROM hambatan WHERE status='Selesai'"));
-?>
+// SUMMARY
+$total = $conn->query("SELECT COUNT(*) FROM hambatan")->fetchColumn();
+$proses = $conn->query("SELECT COUNT(*) FROM hambatan WHERE status='Diproses'")->fetchColumn();
+$selesai = $conn->query("SELECT COUNT(*) FROM hambatan WHERE status='Selesai'")->fetchColumn();
 
-<?php
-$grafik = mysqli_query($conn,"
+// GRAFIK
+$grafik = $conn->query("
     SELECT negara, COUNT(*) AS jumlah
     FROM hambatan
     GROUP BY negara
@@ -23,7 +23,7 @@ $grafik = mysqli_query($conn,"
 $label_negara = [];
 $data_jumlah = [];
 
-while($row = mysqli_fetch_assoc($grafik)){
+while($row = $grafik->fetch(PDO::FETCH_ASSOC)){
     $label_negara[] = $row['negara'];
     $data_jumlah[] = $row['jumlah'];
 }
@@ -37,7 +37,6 @@ while($row = mysqli_fetch_assoc($grafik)){
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
 <style>
 body {
@@ -81,7 +80,6 @@ body {
 .bg-orange {background:#fb8c00;}
 .bg-green {background:#43a047;}
 
-/* ICON BULAT */
 .icon-circle {
     background:white;
     width:55px;
@@ -97,19 +95,16 @@ body {
 .icon-orange {color:#fb8c00;}
 .icon-green {color:#43a047;}
 
-/* BOX */
 .box {
     background:white;
     padding:20px;
     border-radius:10px;
 }
 
-/* STATUS */
 .badge-baru {background:red;}
 .badge-proses {background:orange;}
 .badge-selesai {background:green;}
 
-/* GRAFIK */
 .chart-box {
     max-width:500px;
     margin:auto;
@@ -123,7 +118,6 @@ canvas {
 
 <body>
 
-<!-- NAVBAR -->
 <?php include 'navbar.php'; ?>
 
 <div class="container mt-4">
@@ -185,10 +179,7 @@ labels: <?= json_encode($label_negara) ?>,
 datasets: [{
 label: 'Jumlah Hambatan',
 data: <?= json_encode($data_jumlah) ?>,
-backgroundColor: '#1e88e5',
-borderColor: '#1565c0',
-borderWidth: 1,
-borderRadius: 6
+backgroundColor: '#1e88e5'
 }]
 },
 options: {
@@ -222,8 +213,8 @@ ticks: { precision: 0 }
 </tr>
 
 <?php
-$data = mysqli_query($conn,"SELECT * FROM hambatan ORDER BY id DESC LIMIT 5");
-while($d = mysqli_fetch_array($data)){
+$data = $conn->query("SELECT * FROM hambatan ORDER BY id DESC LIMIT 5");
+while($d = $data->fetch(PDO::FETCH_ASSOC)){
 ?>
 
 <tr>
