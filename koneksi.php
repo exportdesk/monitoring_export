@@ -1,7 +1,9 @@
 <?php
-$conn = mysqli_connect("localhost","root","","ecd_hambatan");
-
-if (!$conn) {
-    die("Koneksi gagal");
-}
+$conn = mysqli_connect(
+    $_ENV['MYSQLHOST'],
+    $_ENV['MYSQLUSER'],
+    $_ENV['MYSQLPASSWORD'],
+    $_ENV['MYSQLDATABASE'],
+    $_ENV['MYSQLPORT']
+);
 ?>
